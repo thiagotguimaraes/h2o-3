@@ -166,7 +166,7 @@ public class SortTest extends TestUtil {
     return fr;
   }
 
-  @Test public void TestSortTimes() throws IOException {
+/*  @Test public void TestSortTimes() throws IOException {
     Frame fr=null, sorted=null;
     try {
       fr = parse_test_file("smalldata/synthetic/sort_crash.csv");
@@ -179,9 +179,9 @@ public class SortTest extends TestUtil {
       if( fr != null ) fr.delete();
       if( sorted != null ) sorted.delete();
     }
-  }
+  }*/
 
-  @Test public void TestSortTimes2() throws IOException {
+  @Test public void TestSortTimes() throws IOException {
     Scope.enter();
     Frame fr=null, sorted=null;
     try {
@@ -189,19 +189,54 @@ public class SortTest extends TestUtil {
       sorted = fr.sort(new int[]{0});
       Scope.track(fr);
       Scope.track(sorted);
-      testSort(sorted);
+      testSort(sorted, fr);
     } finally {
       Scope.exit();
     }
   }
 
-  private static void testSort(Frame fr) throws IOException {
+  /*
+    Test sorting of doubles that contains zeros, +/- infinities.
+   */
+  @Test public void TestSortIntegersDoubles() throws IOException {
     Scope.enter();
-    Vec vec = fr.vec(0);
-    Scope.track(vec);
+    Frame fr=null, sorted=null;
     try {
+      fr = parse_test_file("smalldata/synthetic/integerFrame.csv");  // first test no NA frame
+      sorted = fr.sort(new int[]{0});
+      Scope.track(fr);
+      Scope.track(sorted);
+      testSort(sorted, fr);
+    } finally {
+      Scope.exit();
+    }
+  }
 
+  private static void testSort(Frame frSorted, Frame originalF) throws IOException {
+    Scope.enter();
+    Vec vec = frSorted.vec(0);
+    Vec vecO = originalF.vec(0);
+    Scope.track(vec);
+    Scope.track(vecO);
+    long naCnt = 0;   // make sure NAs are sorted at the beginning of frame
+    long pinfCnt = 0;
+    long ninfCnt = 0;
+
+    if (originalF.hasNAs()) {
+      naCnt = vecO.naCnt();
+    }
+
+    try {
+      // check size
+      assertTrue(frSorted.numRows() == originalF.numRows());  // make sure sizes are the same
+      assertTrue(vec.naCnt() == vecO.naCnt());                // NA counts agree
+      assertTrue(vec.pinfs() == vecO.pinfs());                // inf number agree
+      assertTrue(vec.ninfs() == vecO.ninfs());                // -inf number agree
       int len = (int) vec.length();
+      // count the NAs first
+      for (int i = 0; i < naCnt; i++) {
+        assertTrue(Double.isNaN(vec.at(i)));
+      }
       for (int i = 1; i < len; i++) {
         if (!Double.isNaN(vec.at(i - 1)) && !Double.isNaN(vec.at(i)))
           assertTrue(vec.at(i - 1) <= vec.at(i));

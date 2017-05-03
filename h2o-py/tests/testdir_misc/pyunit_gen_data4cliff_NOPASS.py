@@ -13,11 +13,19 @@ def gen_data():
     intA = []
     sizeMat = range(0,64)   # use to generate data of values 0, +/- 2^0 to +/1 2^64
     numZeros = 500
-    numNans = 500   # generate Nans
+    numNans = 0   # generate Nans
+    numInfs = 500
 
     if (numNans > 0):
         floatA = [float('NaN')]*numNans
         intA = [float('NaN')]*numNans
+
+    if (numInfs > 0):
+        floatA.extend([float('inf')]*numInfs)
+        intA.extend([float('inf')]*numInfs)
+        floatA.extend([-1.0*float('inf')]*numInfs)
+        intA.extend([-1*float('inf')]*numInfs)
+
     # first generate the zeros into floatA and intA.  Multiply them with +/-1 to mess them up a little
     for index in range(numZeros):
         floatA.append(0.0*randint(-1,1))
