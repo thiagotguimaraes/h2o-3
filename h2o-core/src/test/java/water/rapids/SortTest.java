@@ -180,4 +180,34 @@ public class SortTest extends TestUtil {
       if( sorted != null ) sorted.delete();
     }
   }
+
+  @Test public void TestSortTimes2() throws IOException {
+    Scope.enter();
+    Frame fr=null, sorted=null;
+    try {
+      fr = parse_test_file("sort_crash.csv");
+      sorted = fr.sort(new int[]{0});
+      Scope.track(fr);
+      Scope.track(sorted);
+      testSort(sorted);
+    } finally {
+      Scope.exit();
+    }
+  }
+
+  private static void testSort(Frame fr) throws IOException {
+    Scope.enter();
+    Vec vec = fr.vec(0);
+    Scope.track(vec);
+    try {
+
+      int len = (int) vec.length();
+      for (int i = 1; i < len; i++) {
+        if (!Double.isNaN(vec.at(i - 1)) && !Double.isNaN(vec.at(i)))
+          assertTrue(vec.at(i - 1) <= vec.at(i));
+      }
+    } finally {
+      Scope.exit();
+    }
+  }
 }
