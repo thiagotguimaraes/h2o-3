@@ -1,17 +1,15 @@
 package water;
 
-import org.eclipse.jetty.plus.jaas.JAASLoginService;
+
+import org.eclipse.jetty.jaas.JAASLoginService;
 import org.eclipse.jetty.security.*;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.security.authentication.FormAuthenticator;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.bio.SocketConnector;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.session.HashSessionIdManager;
 import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -136,22 +134,8 @@ public abstract class AbstractHTTPD {
       constraint.setName("auth");
       constraint.setAuthenticate(true);
 
-      // Configure role stuff (to be disregarded).  We are ignoring roles, and only going off the user name.
-      //
-      //   Jetty 8 and prior.
-      //
-      //     Jetty 8 requires the security.setStrict(false) and ANY_ROLE.
-      security.setStrict(false);
-      constraint.setRoles(new String[]{Constraint.ANY_ROLE});
 
-      //   Jetty 9 and later.
-      //
-      //     Jetty 9 and later uses a different servlet spec, and ANY_AUTH gives the same behavior
-      //     for that API version as ANY_ROLE did previously.  This required some low-level debugging
-      //     to figure out, so I'm documenting it here.
-      //     Jetty 9 did not require security.setStrict(false).
-      //
-      // constraint.setRoles(new String[]{Constraint.ANY_AUTH});
+      constraint.setRoles(new String[]{Constraint.ANY_AUTH});
 
       ConstraintMapping mapping = new ConstraintMapping();
       mapping.setPathSpec("/*"); // Lock down all API calls
@@ -195,11 +179,11 @@ public abstract class AbstractHTTPD {
   protected void startHttp() throws Exception {
     _server = new Server();
 
-    Connector connector=new SocketConnector();
-    connector.setHost(_ip);
-    connector.setPort(_port);
-
-    createServer(connector);
+    HttpConfiguration http_config = new HttpConfiguration();
+    ServerConnector httpConnector = new ServerConnector(_server, new HttpConnectionFactory(http_config));
+    httpConnector.setHost(_ip);
+    httpConnector.setPort(_port);
+    createServer(httpConnector);
   }
 
   /**
@@ -209,18 +193,16 @@ public abstract class AbstractHTTPD {
    */
   private void startHttps() throws Exception {
     _server = new Server();
-
+    
     SslContextFactory sslContextFactory = new SslContextFactory(_args.jks);
     sslContextFactory.setKeyStorePassword(_args.jks_pass);
-
-    SslSocketConnector httpsConnector = new SslSocketConnector(sslContextFactory);
-
+    ServerConnector httpsConnector = new ServerConnector(_server, sslContextFactory);
     if (getIp() != null) {
       httpsConnector.setHost(getIp());
     }
     httpsConnector.setPort(getPort());
-
     createServer(httpsConnector);
+
   }
 
   /**
