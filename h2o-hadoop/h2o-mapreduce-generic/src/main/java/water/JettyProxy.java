@@ -1,10 +1,10 @@
 package water;
 
-import org.eclipse.jetty.client.HttpExchange;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.proxy.ProxyServlet;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlets.ProxyServlet;
 import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.security.Credential;
 import water.network.SecurityUtils;
@@ -52,8 +52,9 @@ public class JettyProxy extends AbstractHTTPD {
     }
 
     @Override
-    protected void customizeExchange(HttpExchange exchange, HttpServletRequest request) {
-      exchange.addRequestHeader("Authorization", _basicAuth);
+    protected void addProxyHeaders(HttpServletRequest clientRequest, Request proxyRequest) {
+      proxyRequest.header("Authorization", _basicAuth);
+      super.addProxyHeaders(clientRequest, proxyRequest);
     }
   }
 
