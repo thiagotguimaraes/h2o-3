@@ -5,8 +5,6 @@ apply plugin: 'java'
 //
 description = "H2O Core"
 
-def jettyVersion="9.2.21.v20170120"
-
 dependencies {
   // Dependency on shared model support
   compile project (':h2o-genmodel')
@@ -19,16 +17,7 @@ dependencies {
   compile "ai.h2o:google-analytics-java:1.1.2-H2O-CUSTOM"
 
   compile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
-  compile "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
-  compile "org.eclipse.jetty:jetty-plus:${jettyVersion}"
   compile "org.eclipse.jetty:jetty-jaas:${jettyVersion}"
-  compile "org.eclipse.jetty:jetty-io:${jettyVersion}"
-  compile "org.eclipse.jetty:jetty-security:${jettyVersion}"
-  compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
-  compile "org.eclipse.jetty:jetty-util:${jettyVersion}"
-  compile "org.eclipse.jetty:jetty-http:${jettyVersion}"
-  compile "org.eclipse.jetty:jetty-proxy:${jettyVersion}"
-
 
   compile ("com.github.rwl:jtransforms:2.4.0") { exclude module: "junit" }
   compile project(":h2o-jaas-pam")
