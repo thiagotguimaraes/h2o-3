@@ -62,14 +62,15 @@ public class LogsHandler extends Handler {
           case "error":
           case "fatal":
           case "httpd":
-            if(!Log.isLoggingFor(name)){
-              log = "Logging for "+ name.toUpperCase() + " is not enabled as the log level is set to " + Log.LVLS[Log.getLogLevel()]+".";
-            }else {
-              try {
-                logPathFilename = Log.getLogFilePath(name);
-              } catch (Exception e) {
-                log = "H2O logging not configured.";
-              }
+            Log.Level level = Log.Level.fromString(name);
+            if(!Log.isLoggingFor(level)){
+              log = "Logging for "+ name.toUpperCase() + " is not enabled as the log level is set to " + level + ".";
+            } else {
+                if(!Log.isLoggerInitialized()){
+                  log = "H2O logging not configured.";
+                } else {
+                  logPathFilename = Log.getLogFilePath(level);
+                }
             }
             break;
           default:
