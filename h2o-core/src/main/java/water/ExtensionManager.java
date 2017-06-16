@@ -33,7 +33,8 @@ public class ExtensionManager {
   }
 
   public boolean isCoreExtensionsEnabled(String extensionName){
-    return coreExtensions.get(extensionName).isEnabled();
+    AbstractH2OExtension ext = coreExtensions.get(extensionName);
+    return ext != null && ext.isEnabled();
   }
 
   /**
