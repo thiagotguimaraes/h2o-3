@@ -14,10 +14,7 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import water.DKV;
-import water.Key;
-import water.Scope;
-import water.TestUtil;
+import water.*;
 import water.exceptions.H2OModelBuilderIllegalArgumentException;
 import water.fvec.Frame;
 import water.util.Log;
@@ -41,7 +38,7 @@ public class XGBoostTest extends TestUtil {
                       + "Make sure that you have correct libraries installed"
                       + "and correctly configured LD_LIBRARY_PATH, especially"
                       + "make sure that CUDA libraries are available if you are running on GPU!",
-                      hex.tree.xgboost.XGBoost.haveBackend());
+            ExtensionManager.getInstance().isCoreExtensionsEnabled(XGBoostExtension.NAME));
   }
 
   static DMatrix[] getMatrices() throws XGBoostError {
