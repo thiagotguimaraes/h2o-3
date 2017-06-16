@@ -129,7 +129,7 @@ class ModelBase(backwards_compatible()):
         if not isinstance(test_data, h2o.H2OFrame): raise ValueError("test_data must be an instance of H2OFrame")
         j = H2OJob(h2o.api("POST /4/Predictions/models/%s/frames/%s" % (self.model_id, test_data.frame_id)),
                    self._model_json["algo"] + " prediction")
-        j.poll()
+        j.poll()        # warning messages associated with job now and printed automatically
         return h2o.get_frame(j.dest_key)
 
 

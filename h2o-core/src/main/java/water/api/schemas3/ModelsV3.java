@@ -1,8 +1,9 @@
 package water.api.schemas3;
 
 import hex.Model;
-import water.api.*;
+import water.api.API;
 import water.api.ModelsHandler.Models;
+import water.api.SchemaServer;
 
 public class ModelsV3 extends RequestSchemaV3<Models, ModelsV3> {
 
@@ -56,6 +57,7 @@ public class ModelsV3 extends RequestSchemaV3<Models, ModelsV3> {
         this.models[i++] = (ModelSchemaV3)SchemaServer.schema(this.getSchemaVersion(), model).fillFromImpl(model);
       }
     }
+
     return this;
   }
 
