@@ -17,10 +17,6 @@ public class H2OStarter {
    */
   public static void start(String[] args, String relativeResourcePath, boolean finalizeRestRegistration) {
     long time0 = System.currentTimeMillis();
-    // FIXME: move into H2O.main()
-    H2O.configureLogging();
-    ExtensionManager.getInstance().registerCoreExtensions();
-
     // Fire up the H2O Cluster
     H2O.main(args);
 
