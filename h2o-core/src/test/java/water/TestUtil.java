@@ -86,9 +86,9 @@ public class TestUtil extends Iced {
     x = Math.max(MINCLOUDSIZE, x);
     if( !_stall_called_before ) {
       H2O.main(args);
-      ExtensionManager.getInstance().registerRestApiExtensions();
       H2O.registerResourceRoot(new File(System.getProperty("user.dir") + File.separator + "h2o-web/src/main/resources/www"));
       H2O.registerResourceRoot(new File(System.getProperty("user.dir") + File.separator + "h2o-core/src/main/resources/www"));
+      ExtensionManager.getInstance().registerRestApiExtensions();
       _stall_called_before = true;
     }
     H2O.waitForCloudSize(x, timeout);
