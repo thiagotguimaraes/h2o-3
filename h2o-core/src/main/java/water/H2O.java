@@ -775,8 +775,10 @@ final public class H2O {
     // The trick is the output path / file isn't known until the H2O API PORT is chosen,
     // so real logger initialization has to happen somewhat late in the startup lifecycle.
     java.util.Properties p = new java.util.Properties();
+    p.setProperty("log4j.rootLogger", "INFO");
     p.setProperty("log4j.logger.org.reflections.Reflections", "WARN");
     p.setProperty("log4j.logger.org.eclipse.jetty", "WARN");
+    p.setProperty("log4j.logger.ml.dmlc.xgboost4j.java", "OFF");
     PropertyConfigurator.configure(p);
     System.setProperty("org.eclipse.jetty.LEVEL", "WARN");
 
