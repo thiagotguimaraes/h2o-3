@@ -38,6 +38,11 @@ public class ModelBuilderHandler<B extends ModelBuilder, S extends ModelBuilderS
 
     // User specified key, or make a default?
     String model_id = parms.getProperty("model_id");
+    boolean modifiedModelID = false;
+    if ((model_id != null) && (model_id.contains("/"))) { // found / in model_id, replace with _ and set warning
+      model_id = model_id.replaceAll("/", "_");
+      modifiedModelID = true;
+    }
     Key<Model> key = doTrain ? (model_id==null ? ModelBuilder.defaultKey(algoName) : Key.<Model>make(model_id)) : null;
     // Default Job for just this training
     Job job = doTrain ? new Job<>(key,ModelBuilder.javaName(algoURLName),algoName) : null;
@@ -51,6 +56,12 @@ public class ModelBuilderHandler<B extends ModelBuilder, S extends ModelBuilderS
     PojoUtils.copyProperties(schema.parameters, builder._parms, PojoUtils.FieldNaming.ORIGIN_HAS_UNDERSCORES, null, new String[] { "error_count", "messages" });
     schema.setHttpStatus(HttpResponseStatus.OK.getCode());
     if( doTrain ) schema.job.fillFromImpl(builder.trainModel());
+    if (modifiedModelID) {
+      String newWarn = "original model_id contains / which is replaced with _.  The new model_id is "+model_id;
+      builder.warn("ModelBuilder ", "original model_id contains / which is " +
+              "replaced with _.  The new model_id is "+model_id);
+      job.warn(newWarn);
+    }
     return schema;
   }
 
