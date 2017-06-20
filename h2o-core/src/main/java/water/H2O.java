@@ -777,7 +777,12 @@ final public class H2O {
     java.util.Properties p = new java.util.Properties();
     p.setProperty("log4j.logger.org.reflections.Reflections", "WARN");
     p.setProperty("log4j.logger.org.eclipse.jetty", "WARN");
-    p.setProperty("log4j.logger.ml.dmlc.xgboost4j.java", "OFF");
+
+    p.setProperty("log4j.logger.ml.dmlc.xgboost4j.java", "WARN, console");
+    p.setProperty("log4j.appender.console", "org.apache.log4j.ConsoleAppender");
+    p.setProperty("log4j.appender.console.layout", "org.apache.log4j.PatternLayout");
+    p.setProperty("log4j.appender.console.layout.ConversionPattern", "%m%n");
+
     PropertyConfigurator.configure(p);
     System.setProperty("org.eclipse.jetty.LEVEL", "WARN");
 
